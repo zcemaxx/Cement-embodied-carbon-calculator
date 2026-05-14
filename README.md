@@ -1,2 +1,6 @@
 # Cement-embodied-carbon-calculator
-quantify the embodied carbon generated from cement manufacturing process in each lifecycle stage
+Development of Embodied Carbon Calculator for Cement.  
+A thesis submitted in the fulfilment of the degree of Master of Philosophy in the Faculty of Science and Engineering 
+
+## Introduction
+### Background
