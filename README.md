@@ -5,8 +5,8 @@ A thesis submitted in the fulfilment of the degree of Master of Philosophy in th
 ---
 
 ## Table of Contents
-- [System Boundary](#system-boundary)
-- [Functional Unit](#functional-unit)
+- [Background](Background)
+- [Calculation Scope](Calculation_scope)
 - [Methodology](#methodology)
   - [A1 – Raw Material Extraction](#a1--raw-material-extraction)
   - [A2 – Transportation](#a2--transportation)
@@ -16,10 +16,10 @@ A thesis submitted in the fulfilment of the degree of Master of Philosophy in th
 - [How to Run](#how-to-run)
 
 ---
+## Scope
+### System Boundary
 
-## System Boundary
-
-This calculator covers **cradle-to-gate** embodied carbon, which includes:
+This calculator covers cradle-to-gate embodied carbon, which includes:
 
 | Stage | Description | Included |
 |---|---|---|
@@ -29,13 +29,11 @@ This calculator covers **cradle-to-gate** embodied carbon, which includes:
 | A4 | Transport to site | ❌ |
 | A5 | Installation | ❌ |
 
----
+### Functional Unit
 
-## Functional Unit
+Scaling factors to convert per-unit emissions to functional units, e.g., per 1 tonne of Ordinary Portland Cement (OPC).
 
-**1 tonne of Ordinary Portland Cement (OPC)**
-
-All CO₂ emissions are expressed in **kgCO₂ per tonne of OPC**.
+All CO₂ emissions are expressed in kgCO₂ per tonne of OPC.
 
 ---
 
