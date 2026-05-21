@@ -53,7 +53,7 @@ Total EC = ∑ (Activity data × Emission factor)
 
 Each life cycle stage breaks down emission sources as follows.
 
-![Figure 1](./Figures/Full cement manufacturing process.jpg)
+![Figure 1](https://github.com/zcemaxx/Cement-embodied-carbon-calculator/blob/main/Figures/Full%20cement%20manufacturing%20process.jpg)
 
 ### A1 – Raw Material Extraction
 
