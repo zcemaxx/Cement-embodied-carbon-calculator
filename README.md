@@ -1,11 +1,16 @@
 # Embodied Carbon Calculator for Ordinary Portland Cement (OPC)
 
 A thesis submitted in the fulfilment of the degree of Master of Philosophy in the Faculty of Science and Engineering
+<br>
 
----
+## Background
+Building and construction industry is a major contributor to global GHG emissions. Decarbonisation efforts have focused on operational carbon, while embodied carbon has received less attention. To balance the trade-off between carbon savings and costs, this study develops a parametric model for quantifying cradle-to-gate embodied carbon emission factors, initially applied to cement as one of the most widely used and carbon-intensive construction materials.
+
+Existing databases and tools often provide generalised emission factors without fully disclosing their assumptions, system boundaries, data sources, or calculation processes. This study addresses this gap by offering a transparent and replicable methodology for calculating and customising emission factors under defined assumptions and project contexts.
+
+<br>
 
 ## Table of Contents
-- [Background](Background)
 - [Calculation Scope](Calculation_scope)
 - [Methodology](#methodology)
   - [A1 – Raw Material Extraction](#a1--raw-material-extraction)
@@ -15,8 +20,9 @@ A thesis submitted in the fulfilment of the degree of Master of Philosophy in th
 - [References](#references)
 - [How to Run](#how-to-run)
 
----
-## Scope
+<br>
+
+## Calculation Scope
 ### System Boundary
 
 This calculator covers cradle-to-gate embodied carbon, which includes:
@@ -31,23 +37,21 @@ This calculator covers cradle-to-gate embodied carbon, which includes:
 
 ### Functional Unit
 
-Scaling factors to convert per-unit emissions to functional units, e.g., per 1 tonne of Ordinary Portland Cement (OPC).
+All CO₂ emissions are expressed in kgCO₂ or kgCO₂ per tonne of cement.
 
-All CO₂ emissions are expressed in kgCO₂ per tonne of OPC.
+For consistency, emissions expressed per unit mass of cement produced are converted to functional unit, such as per 1 tonne of Ordinary Portland Cement (OPC).
 
----
+<br>
 
 ## Methodology
 
 Emissions are calculated using the following general formula:
 
 ```
-CO₂ = Activity data × Emission factor
+Total EC = ∑ (Activity data × Emission factor)
 ```
 
 Each life cycle stage breaks down emission sources as follows.
-
----
 
 ### A1 – Raw Material Extraction
 
