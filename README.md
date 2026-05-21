@@ -51,34 +51,46 @@ Emissions are calculated using the following general formula:
 Total EC = ∑ (Activity data × Emission factor)
 ```
 
-Each life cycle stage breaks down emission sources as follows.
+Each life cycle stage breaks down emission sources as follows:  
+
 
 ![Figure 1](https://github.com/zcemaxx/Cement-embodied-carbon-calculator/blob/main/Figures/Full%20cement%20manufacturing%20process.jpg)
 
+
 ### A1 – Raw Material Extraction
 
-A1 covers two sub-stages: quarrying and crushing & screening.
+A1 covers two sub-stages: quarrying (A1.1) and crushing & screening (A1.2). Emission sources include diesel combustion and ANFO blasting in quarrying, and electricity consumption in crushing & screening.
 
 #### A1.1 – Quarrying
 
-Clinker composition is first determined from its five major mineral components:
+The calculator first asks whether the user has a reference cement type. If yes, the user provides their own clinker proportions and clinker-to-cement ratio. If no, the default OPC Type 1 composition is used.
 
-| Component | Formula |
-|---|---|
-| Tricalcium silicate | 3CaO·SiO₂ |
-| Dicalcium silicate | 2CaO·SiO₂ |
-| Tricalcium aluminate | 3CaO·Al₂O₃ |
-| Tetracalcium aluminoferrite | 4CaO·Al₂O₃·Fe₂O₃ |
-| Gypsum | CaSO₄·2H₂O |
+Clinker content in OPC is fixed at 95%.
 
-CaO content in clinker is derived from molecular weight ratios of each component. Limestone required is then back-calculated using:
+CaO weight in each component is derived from molecular weight ratios. For example, for tricalcium silicate (3CaO·SiO₂, molecular weight = 228):
+CaO weight = (56 × 3) / 228 = 0.74
+
+Example output:
+
+| Component | Formula | Proportion (%) | CaO weight (%) |
+|---|---|---|---|
+| Tricalcium silicate | 3CaO·SiO₂ | 50 | 0.74 |
+| Dicalcium silicate | 2CaO·SiO₂ | 25 | 0.65 |
+| Tricalcium aluminate | 3CaO·Al₂O₃ | 10 | 0.62 |
+| Tetracalcium aluminoferrite | 4CaO·Al₂O₃·Fe₂O₃ | 10 | 0.46 |
+| Gypsum | CaSO₄·2H₂O | 5 | 0.00 |
+
+Calculate total CaO content as the weighted sum of CaO across all components:
+CaO in clinker (%) = Σ [proportion (%) × CaO weight]
+The result of CaO weights in clinker is 64.05%.
+
+Limestone required is back-calculated from the CaO needed in clinker using the stoichiometric ratio of CaCO₃ to CaO (100/56 = 1.785). 
+Mineral purity of the quarried limestone is also accounted, requiring user to enter the number manually. 
 
 ```
 CaCO₃ required = cement mass × clinker% × CaO in clinker% × 1.785
 Limestone required = CaCO₃ required / mineral purity
 ```
-
-Where **1.785** is the stoichiometric ratio of CaCO₃ to CaO (100/56).
 
 For each raw material (Limestone, Clay, Sand, Iron ore), emissions come from two sources:
 
