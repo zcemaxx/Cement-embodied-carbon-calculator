@@ -53,6 +53,8 @@ Total EC = ∑ (Activity data × Emission factor)
 
 Each life cycle stage breaks down emission sources as follows.
 
+![Figure 1](./Figures/Full cement manufacturing process.jpg)
+
 ### A1 – Raw Material Extraction
 
 A1 covers two sub-stages: quarrying and crushing & screening.
