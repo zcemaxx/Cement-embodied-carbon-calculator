@@ -80,12 +80,14 @@ Example output:
 | Tetracalcium aluminoferrite | 4CaO·Al₂O₃·Fe₂O₃ | 10 | 0.46 |
 | Gypsum | CaSO₄·2H₂O | 5 | 0.00 |
 
-Calculate total CaO content as the weighted sum of CaO across all components:
+To estimate the raw materials required for producing 1 tonne cement, for instance, we calculate total CaO content as the weighted sum of CaO across all components:
+```
 CaO in clinker (%) = Σ [proportion (%) × CaO weight]
+```
 The result of CaO weights in clinker is 64.05%.
 
-Limestone required is back-calculated from the CaO needed in clinker using the stoichiometric ratio of CaCO₃ to CaO (100/56 = 1.785). 
-Mineral purity of the quarried limestone is also accounted, requiring user to enter the number manually. 
+Then, limestone required is back-calculated from the CaO needed in clinker using the stoichiometric ratio of CaCO₃ to CaO (100/56 = 1.785). 
+Mineral purity of the quarried limestone is also accounted, requiring user to enter the number manually. As a result, it costs 1.21 tonne limestone to produce 1 tonne OPC cement.
 
 ```
 CaCO₃ required = cement mass × clinker% × CaO in clinker% × 1.785
@@ -104,24 +106,33 @@ CO₂_diesel = diesel consumed (L/tonne) × mass (tonne) × 2.68 (kgCO₂/L)
 CO₂_blasting = ANFO used (kg/tonne) × mass (tonne) × 0.26 (kgCO₂/kg)
 ```
 
-Reference values for user guidance:
+where 2.68 kgCO₂/L and 0.26 kgCO₂/kg are emission factors of diesel and ANFO.
 
-| Raw Material | Diesel (L/tonne) | ANFO (kg/tonne) |
-|---|---|---|
-| Limestone | 1.5 – 3.0 | 0.10 – 0.25 |
-| Clay | 1.0 – 2.0 | 0.05 – 0.15 |
-| Sand | 0.5 – 1.5 | 0.03 – 0.10 |
-| Iron ore | 2.0 – 4.0 | 0.15 – 0.30 |
+Reference values of diesel and ANFO consumed to quarry per tonne of raw materials, and with default OPC Type 1 composition:
+
+| Raw Material | Mass / tonne OPC (kg) | Diesel (L/tonne) | ANFO (kg/tonne) |
+|---|---|---|---|
+| Limestone | 1210 | 2 | 0.18 |
+| Clay | 200 | 1.5 | 0.10 |
+| Sand | 50 | 1 | 0.06 |
+| Iron ore | 30 | 3 | 0.22 |
+
+Limestone CO₂ subtotal:  6.54 kgCO₂;  
+Clay CO₂ subtotal:  0.81 kgCO₂;  
+Sand CO₂ subtotal:  0.13 kgCO₂;  
+Iron ore CO₂ subtotal:  0.24 kgCO₂.
 
 #### A1.2 – Crushing & Screening
 
-Electricity consumed by crushing and screening equipment:
+In A1 crushing, electricity consumed by each piece of crushing and screening equipment is calculated separately and sum up with formula:
 
 ```
-CO₂_crushing = Σ [P_i (kW) × t_i (hrs/tonne)] × EF_electricity
+CO₂_crushing = Σ [P_i (kW) × t_i (hrs/tonne)] × EF_electricity (kgCO₂/kWh)
 ```
 
-Reference values for user guidance:
+where EF_electricity = 0.233 kgCO₂/kWh is applied in the UK.
+
+Reference values of equipment:
 
 | Equipment | Power (kW) | hrs/tonne |
 |---|---|---|
