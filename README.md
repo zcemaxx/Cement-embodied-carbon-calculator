@@ -213,43 +213,61 @@ CO₂_A2 = CO₂_leg1 + CO₂_leg2 + CO₂_leg3
 
 ### A3 – Manufacturing
 
-A3 covers three emission sources.
+A3 covers three emission sources: kiln fuel combustion (A3.1), electricity consumption (A3.2), and calcination (A3.3).
 
 #### A3.1 – Kiln Fuel Combustion
 
-Heat required to raise raw meal to kiln temperature (~1200°C):
+Heat required to raise raw meal to kiln temperature (~1200°C) is calculated with:
 
 ```
 Q = m × c × ΔT
-Fuel consumed = Q / calorific value of fuel
-CO₂_combustion = fuel consumed (kg) × EF_fuel (kgCO₂/kg)
 ```
 
 Where:
+- `m` = mass of raw meal (kg)
 - `c` = 0.84 kJ/kg·°C (specific heat capacity of cement raw meal, fixed constant)
 - `ΔT` = kiln temperature − ambient temperature (°C)
 
-Available fuel types and emission factors:
+The fuel consumed and CO₂ produced from the heat generated:
+```
+Fuel consumed (kg) = Q / calorific value of fuel (KJ/kg)
+CO₂_combustion = fuel consumed (kg) × EF_fuel (kgCO₂/kg)
+```
 
-| Fuel | Calorific Value (kJ/kg) | EF (kgCO₂/kg) | Source |
-|---|---|---|---|
-| Coal | 29,307 | 2.42 | IPCC 2006 |
-| Natural gas | 55,500 | 2.75 | IPCC 2006 |
-| Fuel oil | 41,868 | 3.17 | IPCC 2006 |
-| Diesel | 42,700 | 2.68 | IPCC 2006 |
-| Petcoke | 32,500 | 3.40 | IPCC 2006 |
+The user selects a fuel type from the following options. Calorific values and emission factors are fixed constants:
+
+| Fuel | Calorific Value (kJ/kg) | EF (kgCO₂/kg) |
+|---|---|---|
+| Coal | 29,307 | 2.42 |
+| Natural gas | 55,500 | 2.75 |
+| Fuel oil | 41,868 | 3.17 |
+| Diesel | 42,700 | 2.68 |
+| Petcoke | 32,500 | 3.40 |
+
+One example output is
+```
+--- A3.1 Kiln Fuel Combustion ---
+Available fuel types: coal, natural_gas, fuel_oil, diesel, petcoke
+Enter fuel type:  coal
+Enter mass of raw meal (kg) per tonne OPC:  1500
+Enter initial temperature (°C), e.g. 20:  20
+Enter kiln temperature (°C), e.g. 1200:  1200
+  Heat required:     1504800.00 kJ
+  Fuel consumed:     51.34 kg
+  CO₂ combustion:    124.24 kgCO₂
+```
 
 #### A3.2 – Electricity Consumption
 
-Electricity consumed by each piece of equipment:
+Electricity consumed by each piece of equipment is calculated separately and then summed up:
 
 ```
 CO₂_electricity = Σ [P_i (kW) × t_i (hrs/tonne)] × EF_electricity
 ```
 
-Where `EF_electricity` = 0.233 kgCO₂/kWh (UK grid, DESNZ 2023).
+where `EF_electricity` = 0.233 kgCO₂/kWh (UK grid).
 
-Equipment covered:
+Reference values of equipment user inputs:
 
 | Equipment | Power (kW) | hrs/tonne |
 |---|---|---|
@@ -258,6 +276,35 @@ Equipment covered:
 | Fans & blowers | 500 – 1500 | 20 – 30 |
 | Cement mill | 2000 – 5000 | 20 – 35 |
 | Conveyors & pumps | 100 – 500 | 20 – 30 |
+
+Example output:
+```
+--- A3.2 Electricity Consumption ---
+
+Raw mill:
+  Enter power (kW):  1500
+  Enter operating hours per tonne (hrs/tonne):  20
+  Energy:  30000.00 kWh/tonne
+Kiln drive:
+  Enter power (kW):  800
+  Enter operating hours per tonne (hrs/tonne):  25
+  Energy:  20000.00 kWh/tonne
+Fans & blowers:
+  Enter power (kW):  500
+  Enter operating hours per tonne (hrs/tonne):  25
+  Energy:  12500.00 kWh/tonne
+Cement mill:
+  Enter power (kW):  2000
+  Enter operating hours per tonne (hrs/tonne):  25
+  Energy:  50000.00 kWh/tonne
+Conveyors & pumps:
+  Enter power (kW):  100
+  Enter operating hours per tonne (hrs/tonne):  25
+  Energy:  2500.00 kWh/tonne
+
+  Total energy:      115000.00 kWh
+  CO₂ electricity:   26795.00 kgCO₂
+```
 
 #### A3.3 – Calcination
 
