@@ -1,6 +1,6 @@
 # Embodied Carbon Calculator for Ordinary Portland Cement (OPC)
 
-A thesis submitted in the fulfilment of the degree of Master of Philosophy in the Faculty of Science and Engineering
+A thesis submitted in the fulfilment of the degree of Master of Philosophy in the Faculty of Science and Engineering, University of Manchester.
 <br>
 
 ## Background
@@ -140,16 +140,22 @@ Reference values of equipment:
 | Secondary crusher | 100 – 300 | 0.5 – 1.0 |
 | Screening unit | 50 – 150 | 0.3 – 0.8 |
 
-**Total A1:**
+#### Total A1
+Total A1 emissions are the sum of extraction and crushing & screening, in formula of:
 ```
 CO₂_A1 = CO₂_extraction + CO₂_crushing
 ```
 
----
+With default OPC Type 1 cement,   
+Extraction:           7.73 kgCO₂  
+Crushing & screening: 102.52 kgCO₂  
+TOTAL A1:             110.25 kgCO₂/tonne OPC.   
+
+<br>
 
 ### A2 – Transportation
 
-Three transport legs are accounted for:
+A2 covers three transport paths, accounting for the movement of raw materials, fuel, and gypsum to the cement plant.
 
 | Leg | From | To | Mode |
 |---|---|---|---|
@@ -157,36 +163,53 @@ Three transport legs are accounted for:
 | 2 | Fuel supplier | Cement plant | Truck |
 | 3 | Gypsum supplier | Cement plant | Truck |
 
-**For truck, electric rail, diesel rail:**
+Emissions are calculated with general formula, for truck, electric rail, diesel rail:
 ```
 CO₂_transport = distance (km) × mass (tonne) × EF_transport (kgCO₂/tonne·km)
 ```
 
-**For conveyor belt:**
+For conveyor belt:
 ```
 CO₂_conveyor = P (kW) × t (hrs) × EF_electricity (kgCO₂/kWh)
 ```
 
-Transport emission factors:
+Transport emission factors referred in calculation are listed below:
 
-| Mode | EF (kgCO₂/tonne·km) | Source |
-|---|---|---|
-| Heavy diesel truck | 0.062 | GLEC Framework |
-| Electric rail | 0.022 | GLEC Framework |
-| Diesel rail | 0.041 | GLEC Framework |
-| Conveyor belt | UK grid (0.233 kgCO₂/kWh) | DESNZ 2023 |
+| Mode | EF (kgCO₂/tonne·km) 
+|---|---|
+| Heavy diesel truck | 0.062 
+| Electric rail | 0.022 
+| Diesel rail | 0.041 
+| Conveyor belt | UK grid (0.233 kgCO₂/kWh) 
 
-Mass carried per leg:
-- Leg 1 → limestone required (tonne, from A1)
-- Leg 2 → fuel consumed / 1000 (tonne, from A3)
-- Leg 3 → gypsum mass (tonne, derived from clinker %)
+#### Path 1 – Quarry to Cement Plant
 
-**Total A2:**
+All raw materials (limestone, clay, sand, iron ore) are transported together.
+Total mass is carried forward from A1:
+
+```
+total_raw_mass = limestone + clay + sand + iron ore  (tonne)
+CO₂_leg1 = total_raw_mass × distance × EF
+```
+
+
+#### Path 2 – Fuel Supplier to Cement Plant
+
+Fuel mass is carried forward from A3.1 (converted from kg to tonne).
+Transport mode is truck only.
+
+```
+CO₂_leg2 = fuel_consumed (tonne) × distance × EF_truck
+```
+
+The user selects the transport mode. Reference values guide the distance input.
+
+#### Total A2
 ```
 CO₂_A2 = CO₂_leg1 + CO₂_leg2 + CO₂_leg3
 ```
 
----
+<br>
 
 ### A3 – Manufacturing
 
