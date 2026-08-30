@@ -277,34 +277,6 @@ Reference values of equipment user inputs:
 | Cement mill | 2000 – 5000 | 20 – 35 |
 | Conveyors & pumps | 100 – 500 | 20 – 30 |
 
-Example output:
-```
---- A3.2 Electricity Consumption ---
-
-Raw mill:
-  Enter power (kW):  1500
-  Enter operating hours per tonne (hrs/tonne):  20
-  Energy:  30000.00 kWh/tonne
-Kiln drive:
-  Enter power (kW):  800
-  Enter operating hours per tonne (hrs/tonne):  25
-  Energy:  20000.00 kWh/tonne
-Fans & blowers:
-  Enter power (kW):  500
-  Enter operating hours per tonne (hrs/tonne):  25
-  Energy:  12500.00 kWh/tonne
-Cement mill:
-  Enter power (kW):  2000
-  Enter operating hours per tonne (hrs/tonne):  25
-  Energy:  50000.00 kWh/tonne
-Conveyors & pumps:
-  Enter power (kW):  100
-  Enter operating hours per tonne (hrs/tonne):  25
-  Energy:  2500.00 kWh/tonne
-
-  Total energy:      115000.00 kWh
-  CO₂ electricity:   26795.00 kgCO₂
-```
 
 #### A3.3 – Calcination
 
@@ -322,19 +294,40 @@ Limestone required and CaO content are carried forward from A1 — no separate u
 CO₂_A3 = CO₂_combustion + CO₂_electricity + CO₂_calcination
 ```
 
----
+Reference Result
+
+All defaults, CEM I, 1 tonne of cement:
+
+| Line item	| kgCO₂e |
+| --- | --- |
+| A1.1 quarrying – mobile plant diesel	| 3.86 |
+| A1.1 quarrying – blasting (ANFO)	| 0.13 |
+| A1.2 crushing and screening	| 0.25 |
+| A1.3 gypsum supply	| 0.75 |
+| A2 raw materials quarry → plant	| 4.46 |
+| A2 gypsum supplier → plant	| 0.62 |
+| A2 fuel supplier → plant	| 1.17 |
+| A3.1 kiln combustion – coal (70%)	| 187.13 |
+| A3.1 kiln combustion – natural gas (30%)	| 48.98 |
+| A3.2 electricity (5 equipment groups)	| 24.01 |
+| A3.3 calcination of CaCO₃	| 501.98 |
+
+
 
 ## Assumptions
 
 | Assumption | Value | Justification |
 |---|---|---|
-| Specific heat capacity of raw meal | 0.84 kJ/kg·°C | Standard literature value for cement raw meal |
+| Kiln specific heat consumption | 3,000 MJ/t clinker | Typical modern dry kiln with preheater/precalciner |
 | UK grid emission factor | 0.233 kgCO₂/kWh | DESNZ 2023 |
 | ANFO emission factor | 0.26 kgCO₂/kg | Sapko et al. (2002) |
+| Diesel emission factor | 2.68 kgCO₂/L | DESNZ 2023 |
 | CaCO₃/CaO stoichiometric ratio | 1.785 (100/56) | Basic chemistry |
-| CO₂/CaO molecular weight ratio | 44/56 | Basic chemistry |
-| Gypsum proportion in clinker | 5% | Standard OPC composition assumption |
+| CO₂/CaCO₃ molecular weight ratio | 0.44 (44/100) | Basic chemistry |
+| Gypsum proportion in clinker | 5% of finished cement| Standard OPC composition assumption; added post-kiln, not a clinker phase |
 | Functional unit | 1 tonne OPC | Cradle-to-gate boundary |
+| CaO source attribution | 100% carbonate | IPCC Tier 2 |
+| Transport factors | GLEC well-to-wheel, incl. empty running	| Return legs not counted separately|
 
 ---
 
@@ -352,17 +345,14 @@ CO₂_A3 = CO₂_combustion + CO₂_electricity + CO₂_calcination
 
 1. Clone the repository:
 ```
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/zcemaxx/Cement-embodied-carbon-calculator.git
 ```
 
-2. Install dependencies:
-```
-pip install pandas
-```
+2. Open Cement_Embodied.ipynb in Jupyter or VS Code, and run the cells in order.
 
 3. Run the calculator:
 ```
-python your_script_name.py
+inp = main()
 ```
 
-4. Follow the prompts to enter your inputs. Reference tables are displayed at each stage to guide your inputs.
+4. Answer the prompts. Press Enter, or type na, to accept the default shown in brackets. Every question shows its default and its permitted range.
