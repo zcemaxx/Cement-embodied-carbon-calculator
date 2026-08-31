@@ -4,18 +4,23 @@ A thesis submitted in the fulfilment of the degree of Master of Philosophy in th
 <br>
 
 ## Background
-Building and construction industry is a major contributor to global GHG emissions. Decarbonisation efforts have focused on operational carbon, while embodied carbon has received less attention. To balance the trade-off between carbon savings and costs, this study develops a parametric model for quantifying cradle-to-gate embodied carbon emission factors, initially applied to cement as one of the most widely used and carbon-intensive construction materials.
+
+Building and construction industry is a major contributor to global GHG emissions. Decarbonisation efforts have focused on operational carbon, while embodied carbon has received less attention. To balance the trade-off between carbon savings and costs, this study develops a parametric model for quantifying cradle-to-gate embodied carbon, initially applied to cement as one of the most widely used and carbon-intensive construction materials.
 
 Existing databases and tools often provide generalised emission factors without fully disclosing their assumptions, system boundaries, data sources, or calculation processes. This study addresses this gap by offering a transparent and replicable methodology for calculating and customising emission factors under defined assumptions and project contexts.
+
+Flexibility is central to the design methodology. The model allows emission factors to be customized based on project-specific parameters. Where measured values are unavailable, pressing Enter automatically substitutes a literature-referenced default value, ensuring that even a partial dataset can generate a complete and traceable result.
 
 <br>
 
 ## Table of Contents
-- [Calculation Scope](Calculation_scope)
+- [Calculation Scope](#calculation-scope)
 - [Methodology](#methodology)
-  - [A1 – Raw Material Extraction](#a1--raw-material-extraction)
+  - [A1 – Raw Material Supply](#a1--raw-material-supply)
   - [A2 – Transportation](#a2--transportation)
   - [A3 – Manufacturing](#a3--manufacturing)
+- [Reference Result](#reference-result)
+- [Parameters](#parameters)
 - [Assumptions](#assumptions)
 - [References](#references)
 - [How to Run](#how-to-run)
@@ -37,9 +42,19 @@ This calculator covers cradle-to-gate embodied carbon, which includes:
 
 ### Functional Unit
 
-All CO₂ emissions are expressed in kgCO₂ or kgCO₂ per tonne of cement.
+All results are expressed in **kgCO₂e per tonne of finished cement**.
 
 For consistency, emissions expressed per unit mass of cement produced are converted to functional unit, such as per 1 tonne of Ordinary Portland Cement (OPC).
+
+### Cement Types
+
+| Type | Clinker | Gypsum | SCM | SCM supply factor |
+|---|---|---|---|---|
+| CEM I | 95% | 5% | – | – |
+| CEM II/B-S | 70% | 5% | 25% GGBS | 79 kgCO₂e/t |
+| CEM III/A | 45% | 5% | 50% GGBS | 79 kgCO₂e/t |
+
+Selecting a type pre-loads its composition; all three fractions remain editable and are validated to sum to 100%.
 
 <br>
 
@@ -53,59 +68,66 @@ Total EC = ∑ (Activity data × Emission factor)
 
 Each life cycle stage breaks down emission sources as follows:  
 
-
 ![Figure 1](https://github.com/zcemaxx/Cement-embodied-carbon-calculator/blob/main/Figures/Full%20cement%20manufacturing%20process.jpg)
 
 
 ### A1 – Raw Material Extraction
 
-A1 covers two sub-stages: quarrying (A1.1) and crushing & screening (A1.2). Emission sources include diesel combustion and ANFO blasting in quarrying, and electricity consumption in crushing & screening.
+A1 covers quarrying (A1.1), crushing and screening (A1.2), and purchased materials (A1.3). Emission sources include diesel combustion and ANFO blasting in quarrying, and electricity consumption in crushing & screening.
 
-#### A1.1 – Quarrying
+#### Clinker chemistry and the material balance
 
-The calculator first asks whether the user has a reference cement type. If yes, the user provides their own clinker proportions and clinker-to-cement ratio. If no, the default OPC Type 1 composition is used.
+The raw material demand is derived from clinker chemistry rather than assumed. CaO mass fraction is computed from molar masses for each of the four Bogue phases:
 
-Clinker content in OPC is fixed at 95%.
-
-CaO weight in each component is derived from molecular weight ratios. For example, for tricalcium silicate (3CaO·SiO₂, molecular weight = 228):
+Cao fraction example - tricalcium silicate (3CaO·SiO₂)
+```
+CaO weight in each component is derived from molecular weight ratios.
+In tricalcium silicate (3CaO·SiO₂, molecular weight = 228):
 CaO weight = (56 × 3) / 228 = 0.74
+```
 
-Example output:
-
-| Component | Formula | Proportion (%) | CaO weight (%) |
+| Phase | Formula | Default proportion | CaO fraction |
 |---|---|---|---|
-| Tricalcium silicate | 3CaO·SiO₂ | 50 | 0.74 |
-| Dicalcium silicate | 2CaO·SiO₂ | 25 | 0.65 |
-| Tricalcium aluminate | 3CaO·Al₂O₃ | 10 | 0.62 |
-| Tetracalcium aluminoferrite | 4CaO·Al₂O₃·Fe₂O₃ | 10 | 0.46 |
-| Gypsum | CaSO₄·2H₂O | 5 | 0.00 |
+| C3S – alite | 3CaO·SiO₂ | 52.6% | 0.7368 |
+| C2S – belite | 2CaO·SiO₂ | 26.3% | 0.6512 |
+| C3A – aluminate | 3CaO·Al₂O₃ | 10.6% | 0.6226 |
+| C4AF – ferrite | 4CaO·Al₂O₃·Fe₂O₃ | 10.5% | 0.4616 |
+| Gypsum | CaSO₄·2H₂O | 0 | 0.00 |
+
+Gypsum does not appear in this table. It is interground after the kiln and is not a clinker phase, so it is accounted separately as 5% of the finished cement. Including it here would understate the clinker phases and, through them, the calcination CO₂.
 
 To estimate the raw materials required for producing 1 tonne cement, for instance, we calculate total CaO content as the weighted sum of CaO across all components:
 ```
 CaO in clinker (%) = Σ [proportion (%) × CaO weight]
 ```
-The result of CaO weights in clinker is 64.05%.
-
-Then, limestone required is back-calculated from the CaO needed in clinker using the stoichiometric ratio of CaCO₃ to CaO (100/56 = 1.785). 
-Mineral purity of the quarried limestone is also accounted, requiring user to enter the number manually. As a result, it costs 1.21 tonne limestone to produce 1 tonne OPC cement.
-
+With the default composition this gives 67.33%.
+Limestone demand is then back-calculated through the CaCO₃/CaO stoichiometric ratio (100/56 = 1.785) and the quarried mineral purity:
 ```
-CaCO₃ required = cement mass × clinker% × CaO in clinker% × 1.785
+CaCO₃ required   = cement mass × clinker% × CaO in clinker% × 1.785
 Limestone required = CaCO₃ required / mineral purity
 ```
+For CEM I, it requires 1.142 t of CaCO₃, and at 95% purity 1.202 t of quarried limestone is supplied per tonne of cement.
 
-For each raw material (Limestone, Clay, Sand, Iron ore), emissions come from two sources:
+Non-carbonate raw materials are entered per tonne of clinker and scaled to the cement basis:
 
-**Diesel combustion:**
-```
-CO₂_diesel = diesel consumed (L/tonne) × mass (tonne) × 2.68 (kgCO₂/L)
-```
+| Raw material | Default (t per t clinker) | Per tonne CEM I |
+|---|---|---|
+| Limestone | derived from chemistry | 1.202 t |
+| Clay | 0.20 | 0.190 t |
+| Sand | 0.03 | 0.028 t |
+| Iron ore | 0.02 | 0.019 t |
+| **Total quarried rock** | | **1.439 t** |
 
-**Blasting (ANFO):**
-```
-CO₂_blasting = ANFO used (kg/tonne) × mass (tonne) × 0.26 (kgCO₂/kg)
-```
+Two masses are carried forward. CaCO₃ (1.142 t) drives calcination, because only carbonate decomposes. Quarried rock (1.439 t) drives digging, crushing and hauling, because all of it is handled.
 
+#### A1.1 – Quarrying
+
+Emissions arise from mobile plant diesel and from blasting, both applied to the total quarried rock:
+
+```
+CO₂_diesel   = quarried rock (t) × diesel (L/t) × 2.68 (kgCO₂/L)
+CO₂_blasting = quarried rock (t) × ANFO (kg/t) × 0.26 (kgCO₂/kg)
+```
 where 2.68 kgCO₂/L and 0.26 kgCO₂/kg are emission factors of diesel and ANFO.
 
 Reference values of diesel and ANFO consumed to quarry per tonne of raw materials, and with default OPC Type 1 composition:
@@ -117,28 +139,27 @@ Reference values of diesel and ANFO consumed to quarry per tonne of raw material
 | Sand | 50 | 1 | 0.06 |
 | Iron ore | 30 | 3 | 0.22 |
 
-Limestone CO₂ subtotal:  6.54 kgCO₂;  
-Clay CO₂ subtotal:  0.81 kgCO₂;  
-Sand CO₂ subtotal:  0.13 kgCO₂;  
-Iron ore CO₂ subtotal:  0.24 kgCO₂.
-
 #### A1.2 – Crushing & Screening
 
-In A1 crushing, electricity consumed by each piece of crushing and screening equipment is calculated separately and sum up with formula:
+Crushing energy is derived from equipment throughput and motor rating, so the specific energy follows from the plant's own machines:
 
 ```
-CO₂_crushing = Σ [P_i (kW) × t_i (hrs/tonne)] × EF_electricity (kgCO₂/kWh)
+Specific energy (kWh/t) = Σ [P_i (kW) / throughput_i (t/h)]
+CO₂_crushing = quarried rock (t) × specific energy × EF_electricity (kgCO₂/kWh)
 ```
-
 where EF_electricity = 0.233 kgCO₂/kWh is applied in the UK.
 
-Reference values of equipment:
+The number of crusher stages is entered by the user, then throughput and power for each. Defaults values of equipment:
 
-| Equipment | Power (kW) | hrs/tonne |
+| Equipment | Power (kW) | tonne/hr |
 |---|---|---|
-| Primary crusher | 200 – 500 | 0.5 – 1.5 |
-| Secondary crusher | 100 – 300 | 0.5 – 1.0 |
-| Screening unit | 50 – 150 | 0.3 – 0.8 |
+| Primary (jaw) crusher | 220 | 600 |
+| Secondary (impact) crusher | 150 | 400 |
+| Screening unit | 50 – 150 | 5 |
+
+#### A1.3 – Purchased Materials
+
+Gypsum and any SCM are bought in rather than quarried by the plant, so their upstream production is included at 15 kgCO₂e/t and 79 kgCO₂e/t respectively.
 
 #### Total A1
 Total A1 emissions are the sum of extraction and crushing & screening, in formula of:
@@ -146,22 +167,18 @@ Total A1 emissions are the sum of extraction and crushing & screening, in formul
 CO₂_A1 = CO₂_extraction + CO₂_crushing
 ```
 
-With default OPC Type 1 cement,   
-Extraction:           7.73 kgCO₂  
-Crushing & screening: 102.52 kgCO₂  
-TOTAL A1:             110.25 kgCO₂/tonne OPC.   
-
 <br>
 
 ### A2 – Transportation
 
-A2 covers three transport paths, accounting for the movement of raw materials, fuel, and gypsum to the cement plant.
+A2 covers four legs. Each takes its own mode and one-way distance.
 
-| Leg | From | To | Mode |
-|---|---|---|---|
-| 1 | Quarry | Cement plant | Truck / Conveyor / Electric rail / Diesel rail |
-| 2 | Fuel supplier | Cement plant | Truck |
-| 3 | Gypsum supplier | Cement plant | Truck |
+| Leg | From | To | Default mode | Default distance |
+|---|---|---|---|---|
+| 1 | Quarry | Cement plant | Truck | 50 km |
+| 2 | Gypsum supplier | Cement plant | Truck | 200 km |
+| 3 | SCM supplier | Cement plant | Electric rail | 300 km |
+| 4 | Fuel supplier | Cement plant | Diesel rail | 300 km |
 
 Emissions are calculated with general formula, for truck, electric rail, diesel rail:
 ```
@@ -182,32 +199,9 @@ Transport emission factors referred in calculation are listed below:
 | Diesel rail | 0.041 
 | Conveyor belt | UK grid (0.233 kgCO₂/kWh) 
 
-#### Path 1 – Quarry to Cement Plant
+These are GLEC well-to-wheel factors, which already allow for typical empty running. Return legs are therefore not counted separately, doing so would double-count.
 
-All raw materials (limestone, clay, sand, iron ore) are transported together.
-Total mass is carried forward from A1:
-
-```
-total_raw_mass = limestone + clay + sand + iron ore  (tonne)
-CO₂_leg1 = total_raw_mass × distance × EF
-```
-
-
-#### Path 2 – Fuel Supplier to Cement Plant
-
-Fuel mass is carried forward from A3.1 (converted from kg to tonne).
-Transport mode is truck only.
-
-```
-CO₂_leg2 = fuel_consumed (tonne) × distance × EF_truck
-```
-
-The user selects the transport mode. Reference values guide the distance input.
-
-#### Total A2
-```
-CO₂_A2 = CO₂_leg1 + CO₂_leg2 + CO₂_leg3
-```
+Masses are carried forward automatically — quarried rock from A1, gypsum and SCM from the cement composition, and kiln fuel from A3.1.
 
 <br>
 
@@ -222,11 +216,12 @@ Heat required to raise raw meal to kiln temperature (~1200°C) is calculated wit
 ```
 Q = m × c × ΔT
 ```
-
 Where:
 - `m` = mass of raw meal (kg)
 - `c` = 0.84 kJ/kg·°C (specific heat capacity of cement raw meal, fixed constant)
 - `ΔT` = kiln temperature − ambient temperature (°C)
+
+The default heat required is 3,000 MJ per tonne of clinker, within the 3.0–3.4 GJ/t range typical of modern dry-process kilns with preheater and precalciner.
 
 The fuel consumed and CO₂ produced from the heat generated:
 ```
@@ -234,28 +229,17 @@ Fuel consumed (kg) = Q / calorific value of fuel (KJ/kg)
 CO₂_combustion = fuel consumed (kg) × EF_fuel (kgCO₂/kg)
 ```
 
-The user selects a fuel type from the following options. Calorific values and emission factors are fixed constants:
+Fuel is entered as a mix, given as percentage shares of kiln heat that are normalised to 100%. This allows co-firing scenarios rather than forcing a single fuel. Calorific values and emission factors are listed below:
 
-| Fuel | Calorific Value (kJ/kg) | EF (kgCO₂/kg) |
+| Fuel | Net Calorific Value (MJ/kg) | EF (kgCO₂/kg) |
 |---|---|---|
-| Coal | 29,307 | 2.42 |
-| Natural gas | 55,500 | 2.75 |
-| Fuel oil | 41,868 | 3.17 |
-| Diesel | 42,700 | 2.68 |
-| Petcoke | 32,500 | 3.40 |
+| Coal | 25.8 | 2.42 |
+| Petcoke | 32.5 | 3.40 |
+| Natural gas | 48.0 | 2.75 |
+| Fuel oil | 40.4 | 3.17 |
+| Diesel | 43.0 | 3.17 |
 
-One example output is
-```
---- A3.1 Kiln Fuel Combustion ---
-Available fuel types: coal, natural_gas, fuel_oil, diesel, petcoke
-Enter fuel type:  coal
-Enter mass of raw meal (kg) per tonne OPC:  1500
-Enter initial temperature (°C), e.g. 20:  20
-Enter kiln temperature (°C), e.g. 1200:  1200
-  Heat required:     1504800.00 kJ
-  Fuel consumed:     51.34 kg
-  CO₂ combustion:    124.24 kgCO₂
-```
+Both columns are on a net calorific value basis. Mixing a gross-CV emission factor with a net CV overstates fuel demand by roughly 5–10% and is a common error.
 
 #### A3.2 – Electricity Consumption
 
@@ -265,36 +249,34 @@ Electricity consumed by each piece of equipment is calculated separately and the
 CO₂_electricity = Σ [P_i (kW) × t_i (hrs/tonne)] × EF_electricity
 ```
 
-where `EF_electricity` = 0.233 kgCO₂/kWh (UK grid).
-
 Reference values of equipment user inputs:
 
-| Equipment | Power (kW) | hrs/tonne |
-|---|---|---|
-| Raw mill | 1500 – 4000 | 15 – 25 |
-| Kiln drive | 800 – 2500 | 20 – 30 |
-| Fans & blowers | 500 – 1500 | 20 – 30 |
-| Cement mill | 2000 – 5000 | 20 – 35 |
-| Conveyors & pumps | 100 – 500 | 20 – 30 |
+| Equipment | Default (kWh per tonne cement) |
+|---|---|
+| Raw mill | 25 |
+| Kiln drive and preheater fans | 25 |
+| Clinker cooler fans | 5 |
+| Cement (finish) mill | 40 |
+| Conveyors, pumps and packing | 8 |
+| **Total** | **103** |
 
+This total sits in the 90–120 kWh/t range reported for modern plants. The finish mill is the single largest electrical load and must not be omitted.
+
+`EF_electricity` defaults to 0.233 kgCO₂e/kWh (UK grid, DESNZ 2023) and is editable, so non-UK or contracted-supply scenarios can be modelled.
 
 #### A3.3 – Calcination
 
 CO₂ released from limestone decomposition (CaCO₃ → CaO + CO₂):
 
 ```
-CO₂_calcination = limestone required (tonne) × CaO in clinker (%) × (44/56) × 1000
+CO₂_calcination = CaCO₃ required (tonne) × (44/100) × 1000
 ```
 
-Where **44/56** is the molecular weight ratio of CO₂ to CaO (fixed chemistry constant).  
-Limestone required and CaO content are carried forward from A1 — no separate user input needed.
+The mass entering this equation is pure CaCO₃, not the as-quarried limestone. Limestone at 95% purity contains 5% non-carbonate material that does not calcine; using the quarried mass would overstate this term by the reciprocal of the purity.
 
-**Total A3:**
-```
-CO₂_A3 = CO₂_combustion + CO₂_electricity + CO₂_calcination
-```
+<br>
 
-Reference Result
+## Reference Result
 
 All defaults, CEM I, 1 tonne of cement:
 
@@ -312,7 +294,34 @@ All defaults, CEM I, 1 tonne of cement:
 | A3.2 electricity (5 equipment groups)	| 24.01 |
 | A3.3 calcination of CaCO₃	| 501.98 |
 
+| Stage | kgCO₂e/t | Share |
+|---|---|---|
+| A1 | 4.99 | 0.6% |
+| A2 | 6.25 | 0.8% |
+| A3 | 762.09 | 98.5% |
+| **Total A1–A3** | **773.33** | **100%** |
 
+<br>
+
+## Parameters
+
+All 28 parameters are prompted for at run time. `list_params()` prints the full set with current values.
+
+| Group | Parameters |
+|---|---|
+| Cement composition | cement type, clinker %, gypsum %, SCM %, SCM supply factor |
+| Clinker phases | C3S, C2S, C3A, C4AF proportions |
+| Raw materials | limestone purity, clay / sand / iron ore per t clinker |
+| A1.1 quarrying | diesel L/t, diesel EF, explosive kg/t, explosive EF, gypsum EF |
+| A1.2 crushing | number of stages, throughput and motor rating per stage |
+| A2 transport | mode and distance for each of four legs |
+| A3.1 kiln | specific heat consumption, fuel mix shares |
+| A3.2 electricity | five equipment groups, kWh per tonne cement |
+| Grid | electricity emission factor |
+
+Inputs are validated as they are entered: values are range-checked, non-numeric entries re-prompt, and the three percentage sets are normalised to 100%. `validate()` re-checks the complete set before any calculation runs, so an inconsistent parameter set raises a named error rather than producing a plausible-looking wrong number.
+
+<br>
 
 ## Assumptions
 
