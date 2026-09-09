@@ -365,3 +365,11 @@ inp = main()
 ```
 
 4. Answer the prompts. Press Enter, or type na, to accept the default shown in brackets. Every question shows its default and its permitted range.
+
+<br>
+
+## Licence
+
+Released under the MIT Licence — see [LICENSE](LICENSE). You are free to use, modify and redistribute this calculator, including commercially, provided the copyright notice is retained.
+
+The emission factors and calorific values are published by third parties (DESNZ, IPCC, GLEC, and the sources listed under [References](#references)) and are not covered by this licence. They are reproduced as factual reference data; please cite the original sources when reusing them.
